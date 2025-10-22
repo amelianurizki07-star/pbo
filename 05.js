@@ -1,72 +1,78 @@
-// Kelas induk (superclass)
+// Kelas induk (superclass) INHERITANCE (sumber pewarisan)
 class Hewan {
   constructor(nama, jenis) {
     this.nama = nama;
     this.jenis = jenis;
   }
 
-  suara() {
+  suara() { // ← method ini akan diwarisi oleh subclass
     return `${this.nama} bersuara...`;
   }
 }
 
-// Kelas turunan (subclass) - Kucing
-class Kucing extends Hewan {
+// Kelas turunan (subclass) INHERITANCE (Pewarisan dari Hewan)
+class Kucing extends Hewan { // ← mewarisi dari class Hewan
   constructor(nama, warna) {
-    super(nama, "Kucing"); // Memanggil constructor superclass
+    super(nama, "Kucing"); // ← memanggil constructor dari superclass (Hewan)
     this.warna = warna;
   }
 }
 
-// Kelas turunan (subclass) - Anjing
-class Anjing extends Hewan {
+const milo = new Kucing("Milo", "Putih");
+console.log(milo.nama);   // Milo
+console.log(milo.jenis);  // Kucing (Didapat dari superclass)
+console.log(milo.suara()); // Milo bersuara... (hasil dari pewarisan method suara())
+
+// Subclass lain: Anjing INHERITANCE (Pewarisan)
+class Anjing extends Hewan { // ← mewarisi dari class Hewan
   constructor(nama, warna) {
     super(nama, "Anjing");
     this.warna = warna;
   }
 
-  // Overriding method
+  // POLYMORPHISM (Overriding method suara() dari superclass)
   suara() {
     return `${this.nama} menggonggong: Woof woof!`;
   }
 }
 
-// Kelas turunan (subclass) - Serigala
-class Serigala extends Hewan {
+const doge = new Anjing("Doge", "Coklat");
+console.log(doge.suara()); // Doge menggonggong: Woof woof!
+
+// Subclass lain: Serigala INHERITANCE (Pewarisan)
+class Serigala extends Hewan { // ← mewarisi dari class Hewan
   constructor(nama, warna) {
     super(nama, "Serigala");
     this.warna = warna;
   }
 
-  // Overriding + super call
+  //POLYMORPHISM (Memanggil method suara() dari superclass dan menambah perilaku baru)
   suara() {
     return super.suara() + " Auuuuu~";
   }
 }
 
-// Kelas turunan (subclass) - Burung
-class Burung extends Hewan {
+const alpha = new Serigala("Alpha", "Abu-abu");
+console.log(alpha.suara()); // Alpha bersuara... Auuuuu~
+
+// Subclass lain: Burung INHERITANCE (Pewarisan)
+class Burung extends Hewan { // ← mewarisi dari class Hewan
   constructor(nama) {
     super(nama, "Burung");
   }
 
+  //POLYMORPHISM (Overriding method suara() dari superclass)
   suara() {
     return `${this.nama} berkicau: Cip cip!`;
   }
 }
 
-// Membuat daftar hewan (polimorfisme)
+//POLYMORPHISM (Setiap objek memanggil suara() sesuai kelasnya)
 const hewanList = [
   new Kucing("Milo", "Putih"),
   new Anjing("Buddy", "Hitam"),
-  new Serigala("Alpha", "Abu-abu"),
   new Burung("Tweety")
 ];
 
-// Menampilkan suara masing-masing hewan
-hewanList.forEach(hewan => {
-  console.log(`${hewan.jenis}: ${hewan.suara()}`);
-});
-
-];
+//POLYMORPHISM (Perilaku suara berbeda tergantung jenis objek)
 hewanList.forEach(hewan => console.log(hewan.suara()));
