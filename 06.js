@@ -1,107 +1,95 @@
-// ==========================
-// KELAS ABSTRAK: Kendaraan
-// ==========================
+// abstrak
 class Kendaraan {
-  constructor(merk) {
-    this.merk = merk;
-
-    // Cegah instansiasi langsung
-    if (this.constructor === Kendaraan) {
-      throw new Error("Kelas abstrak 'Kendaraan' tidak bisa diinstansiasi langsung.");
-    }
-  }
-
-  // Method abstrak (harus diimplementasikan di subclass)
-  maju() {
-    throw new Error("Method 'maju()' harus diimplementasikan!");
-  }
+ constructor(merk) {
+   this.merk = merk;
+ }
+ // Method abstrak (harus diimplementasikan oleh subclass)
+ maju() {
+   throw new Error("Method 'maju()' harus diimplementasikan!");
+ }
 }
 
-// ==========================
-// SUBCLASS: Mobil
-// ==========================
-class Mobil extends Kendaraan {
-  maju() {
-    return `${this.merk} melaju dengan kecepatan tinggi!`;
-  }
+// Versi kedua (kelas abstrak sebenarnya)
+class KendaraanAbstrak {
+ constructor(merk) {
+   this.merk = merk;
+   if (this.constructor === KendaraanAbstrak) {
+     throw new Error("Kelas abstrak 'KendaraanAbstrak' tidak bisa diinstansiasi langsung.");
+   }
+ }
+ maju() {
+   throw new Error("Method 'maju()' harus diimplementasikan!");
+ }
 }
 
-// Implementasi
+// Subclass yang mengimplementasikan kelas abstrak
+class Mobil extends KendaraanAbstrak {
+ maju() {
+   return `${this.merk} melaju dengan kecepatan tinggi!`;
+ }
+}
+
 const avanza = new Mobil("Toyota Avanza");
-console.log(avanza.maju()); // ✅ Toyota Avanza melaju dengan kecepatan tinggi!
+console.log(avanza.maju()); // Toyota Avanza melaju dengan kecepatan tinggi!
+// const kendaraanBaru = new KendaraanAbstrak("Generic"); // Error: Kelas abstrak tidak bisa diinstansiasi
 
-// const kendaraanBaru = new Kendaraan("Generic"); // ❌ Error: Kelas abstrak tidak bisa diinstansiasi
 
+// Interface sebagai objek blueprint //
 
-// ==========================
-// INTERFACE SIMULASI
-// ==========================
 const kendaraanInterface = {
-  maju: function () {
-    throw new Error("Method 'maju()' harus diimplementasikan!");
-  }
+ maju: function () {
+   throw new Error("Method 'maju()' harus diimplementasikan!");
+ }
 };
 
-// ==========================
-// CLASS: Sepeda
-// (Mematuhi interface kendaraan)
-// ==========================
+// Class yang mematuhi interface
 class Sepeda {
-  constructor(merk) {
-    this.merk = merk;
-  }
-
-  maju() {
-    return `${this.merk} melaju dengan tenaga manusia!`;
-  }
+ constructor(merk) {
+   this.merk = merk;
+ }
+ maju() {
+   return `${this.merk} melaju dengan tenaga manusia!`;
+ }
 }
 
-// Uji kepatuhan interface
+// Menguji apakah Sepeda mematuhi interface
 const polygon = new Sepeda("Polygon");
-console.log(polygon.maju()); // ✅ Polygon melaju dengan tenaga manusia!
+console.log(polygon.maju()); // Polygon melaju dengan tenaga manusia!
 
 if (typeof polygon.maju !== "function") {
-  throw new Error("Class Sepeda harus mengimplementasikan 'maju()'!");
+ throw new Error("Class Sepeda harus mengimplementasikan 'maju()'!");
 }
 
 
-// ==========================
-// KELAS ABSTRAK: Pembayaran
-// ==========================
+// Abstrak: Pembayaran
+
 class Pembayaran {
-  constructor(jumlah) {
-    this.jumlah = jumlah;
-    if (this.constructor === Pembayaran) {
-      throw new Error("Kelas abstrak 'Pembayaran' tidak bisa diinstansiasi langsung.");
-    }
-  }
-
-  prosesPembayaran() {
-    throw new Error("Method 'prosesPembayaran()' harus diimplementasikan!");
-  }
+ constructor(jumlah) {
+   this.jumlah = jumlah;
+   if (this.constructor === Pembayaran) {
+     throw new Error("Kelas abstrak 'Pembayaran' tidak bisa diinstansiasi langsung.");
+   }
+ }
+ prosesPembayaran() {
+   throw new Error("Method 'prosesPembayaran()' harus diimplementasikan!");
+ }
 }
 
-// ==========================
-// SUBCLASS: KartuKredit
-// ==========================
 class KartuKredit extends Pembayaran {
-  prosesPembayaran() {
-    return `Pembayaran ${this.jumlah} melalui Kartu Kredit berhasil!`;
-  }
+ prosesPembayaran() {
+   return `Pembayaran ${this.jumlah} melalui Kartu Kredit berhasil!`;
+ }
 }
 
-// ==========================
-// SUBCLASS: PayPal
-// ==========================
 class PayPal extends Pembayaran {
-  prosesPembayaran() {
-    return `Pembayaran ${this.jumlah} melalui PayPal berhasil!`;
-  }
+ prosesPembayaran() {
+   return `Pembayaran ${this.jumlah} melalui PayPal berhasil!`;
+ }
 }
 
-// Implementasi pembayaran
+// Implementasi subclass konkret
 const bayar1 = new KartuKredit(500000);
-console.log(bayar1.prosesPembayaran()); // ✅ Pembayaran 500000 melalui Kartu Kredit berhasil!
+console.log(bayar1.prosesPembayaran()); // Pembayaran 500000 melalui Kartu Kredit berhasil!
 
 const bayar2 = new PayPal(250000);
-console.log(bayar2.prosesPembayaran()); // ✅ Pembayaran 250000 melalui PayPal berhasil!
+console.log(bayar2.prosesPembayaran()); // Pembayaran 250000 melalui PayPal berhasil!
