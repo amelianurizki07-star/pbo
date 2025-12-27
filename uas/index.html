@@ -2,105 +2,97 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Login System OOP - Subject Account</title>
+<title>Login Subject App</title>
 <style>
 body {
+    background: #222;
     font-family: Arial;
-    background: linear-gradient(to right, #667eea, #764ba2);
 }
-.card {
-    width: 360px;
+.box {
+    width: 340px;
     margin: 120px auto;
-    background: white;
+    background: #fff;
     padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,.2);
+    border-radius: 10px;
 }
-h2 { text-align: center; }
 input, button {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     margin-top: 10px;
 }
-#dashboard { display: none; }
+#panel { display: none; }
 </style>
 </head>
-
 <body>
 
-<div class="card" id="loginBox">
-    <h2>LOGIN</h2>
-    <input id="user" placeholder="Username">
-    <input id="pass" type="password" placeholder="Password">
-    <button onclick="system.login()">Masuk</button>
+<div class="box" id="loginBox">
+    <h2>Login</h2>
+    <input id="u" placeholder="Username">
+    <input id="p" type="password" placeholder="Password">
+    <button onclick="app.login()">Login</button>
 </div>
 
-<div class="card" id="dashboard">
-    <h2>Info Account</h2>
-    <div id="info"></div>
-    <button onclick="system.logout()">Logout</button>
+<div class="box" id="panel">
+    <h2>Halaman User</h2>
+    <p id="userInfo"></p>
+    <button onclick="app.logout()">Logout</button>
 </div>
 
 <script>
-class Account {
-    constructor(username, password, role) {
+class SubjectUser {
+    constructor(username, password) {
         this.username = username;
         this.password = password;
-        this.role = role;
     }
 }
 
-class LoginSystem {
+class AppLogin {
 
     constructor() {
-        this.loadData();
+        this.init();
     }
 
-    loadData() {
-        if (!localStorage.getItem("accounts")) {
-            const list = [
-                new Account("amelia", "12345", "User"),
-                new Account("operator", "op123", "Admin")
+    init() {
+        if (!localStorage.getItem("dataset")) {
+            const data = [
+                new SubjectUser("amelia", "123"),
+                new SubjectUser("nabila", "456")
             ];
-            localStorage.setItem("accounts", JSON.stringify(list));
+            localStorage.setItem("dataset", JSON.stringify(data));
         }
     }
 
     login() {
-        const u = user.value;
-        const p = pass.value;
+        const user = u.value;
+        const pass = p.value;
 
-        const accounts = JSON.parse(localStorage.getItem("accounts"));
+        const data = JSON.parse(localStorage.getItem("dataset"));
+        const found = data.find(x => x.username === user && x.password === pass);
 
-        const acc = accounts.find(a => a.username === u && a.password === p);
-
-        if (!acc) {
+        if (!found) {
             alert("Salah login");
             return;
         }
 
-        this.openDashboard(acc);
+        this.open(found);
     }
 
-    openDashboard(acc) {
+    open(account) {
         loginBox.style.display = "none";
-        dashboard.style.display = "block";
-        info.innerHTML = `
-            <p><b>Username:</b> ${acc.username}</p>
-            <p><b>Role:</b> ${acc.role}</p>
+        panel.style.display = "block";
+        userInfo.innerHTML = `
+            Username: <b>${account.username}</b>
         `;
     }
 
     logout() {
-        dashboard.style.display = "none";
+        panel.style.display = "none";
         loginBox.style.display = "block";
     }
 }
 
-const system = new LoginSystem();
+const app = new AppLogin();
 </script>
 
 </body>
 </html>
-
-
