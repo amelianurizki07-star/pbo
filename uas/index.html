@@ -3,44 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Login OOP</title>
+    <title>Premium OOP Login</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
-        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 300px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .error { color: red; font-size: 0.8rem; margin-top: 5px; text-align: center; }
+        :root {
+            --primary: #4f46e5;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: var(--bg); 
+            margin: 0; 
+            transition: background 0.5s ease;
+        }
+
+        /* Card Styling */
+        .card { 
+            background: var(--card-bg); 
+            padding: 2.5rem; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            width: 320px; 
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-top: 5px solid var(--primary);
+        }
+
+        /* Variasi Warna State */
+        .card.state-error { border-top-color: var(--danger); transform: scale(1.02); }
+        .card.state-success { border-top-color: var(--success); transform: scale(1.02); }
+
+        h2 { color: #1e293b; margin-bottom: 1.5rem; }
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 8px 0; 
+            border: 1.5px solid #e2e8f0; 
+            border-radius: 8px; 
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus { border-color: var(--primary); }
+
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold;
+            margin-top: 1rem;
+            transition: opacity 0.3s;
+        }
+
+        button:hover { opacity: 0.9; }
+
+        /* Label Pesan */
+        #message { 
+            font-size: 0.85rem; 
+            margin-top: 1rem; 
+            padding: 8px;
+            border-radius: 6px;
+            display: none; 
+        }
+
+        .msg-red { display: block !important; background: #fee2e2; color: var(--danger); }
+        .msg-green { display: block !important; background: #dcfce7; color: var(--success); }
+
         .hidden { display: none; }
-        .welcome-box { text-align: center; }
+        
+        .avatar {
+            width: 60px; height: 60px; background: var(--success);
+            color: white; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center;
+            margin: 0 auto 1rem; font-size: 1.5rem;
+        }
     </style>
 </head>
 <body>
 
-    <div id="login-section" class="card">
-        <h2>Login</h2>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button id="login-btn">Masuk</button>
-        <p id="message" class="error hidden"></p>
-    </div>
-
-    <div id="user-section" class="card hidden">
-        <div class="welcome-box">
-            <h2>Selamat Datang!</h2>
-            <p>Halo, <strong id="display-name"></strong></p>
-            <button id="logout-btn" style="background: #dc3545;">Logout</button>
+    <div id="app-card" class="card">
+        <div id="login-section">
+            <h2>Sign In</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button id="login-btn">Masuk</button>
         </div>
+
+        <div id="user-section" class="hidden">
+            <div class="avatar">✓</div>
+            <h2>Berhasil!</h2>
+            <p>Selamat datang, <br><strong id="display-name"></strong></p>
+            <button id="logout-btn" style="background: #64748b;">Logout</button>
+        </div>
+
+        <p id="message"></p>
     </div>
 
     <script>
-        // --- Logic OOP ---
         class AuthApp {
             constructor() {
                 this.storageKey = "user_database";
-                this.initDatabase(); // Siapkan data dummy jika kosong
-                
-                // Element Selectors
+                this.initDatabase();
+
+                // UI Elements
+                this.card = document.getElementById('app-card');
                 this.loginSection = document.getElementById('login-section');
                 this.userSection = document.getElementById('user-section');
                 this.userInput = document.getElementById('username');
@@ -48,60 +127,72 @@
                 this.msgLabel = document.getElementById('message');
                 this.displayName = document.getElementById('display-name');
 
-                // Bind Events
-                document.getElementById('login-btn').addEventListener('click', () => this.handleLogin());
-                document.getElementById('logout-btn').addEventListener('click', () => this.handleLogout());
+                this.events();
             }
 
-            // Inisialisasi Database JSON di Local Storage
             initDatabase() {
-                const existingData = localStorage.getItem(this.storageKey);
-                if (!existingData) {
+                if (!localStorage.getItem(this.storageKey)) {
                     const demoUsers = [
-                        { username: "admin", password: "123" },
-                        { username: "user", password: "password" }
+                        { username: "admin", password: "123", role: "Super Admin" },
+                        { username: "user", password: "123", role: "Member" }
                     ];
                     localStorage.setItem(this.storageKey, JSON.stringify(demoUsers));
                 }
             }
 
-            // Method untuk Verifikasi
+            events() {
+                document.getElementById('login-btn').onclick = () => this.handleLogin();
+                document.getElementById('logout-btn').onclick = () => this.handleLogout();
+            }
+
             handleLogin() {
                 const users = JSON.parse(localStorage.getItem(this.storageKey));
-                const inputUser = this.userInput.value;
-                const inputPass = this.passInput.value;
+                const user = users.find(u => u.username === this.userInput.value && u.password === this.passInput.value);
 
-                const foundUser = users.find(u => u.username === inputUser && u.password === inputPass);
-
-                if (foundUser) {
-                    this.showUserPage(foundUser.username);
+                if (user) {
+                    this.updateUI('success', `Akses diberikan untuk ${user.username}`);
+                    // Beri jeda sedikit agar user bisa melihat efek hijau sebelum ganti halaman
+                    setTimeout(() => this.showUserPage(user.username), 800);
                 } else {
-                    this.showError("Salah login: Username atau Password keliru!");
+                    this.updateUI('error', "Salah login: Akun tidak ditemukan!");
                 }
+            }
+
+            updateUI(type, text) {
+                // Reset classes
+                this.card.classList.remove('state-error', 'state-success');
+                this.msgLabel.classList.remove('msg-red', 'msg-green');
+
+                if (type === 'success') {
+                    this.card.classList.add('state-success');
+                    this.msgLabel.classList.add('msg-green');
+                } else {
+                    this.card.classList.add('state-error');
+                    this.msgLabel.classList.add('msg-red');
+                }
+                this.msgLabel.innerText = text;
             }
 
             showUserPage(username) {
                 this.loginSection.classList.add('hidden');
                 this.userSection.classList.remove('hidden');
-                this.displayName.innerText = username;
                 this.msgLabel.classList.add('hidden');
+                this.displayName.innerText = username;
             }
 
             handleLogout() {
+                // Reset UI ke awal
+                this.card.classList.remove('state-error', 'state-success');
                 this.loginSection.classList.remove('hidden');
                 this.userSection.classList.add('hidden');
+                this.msgLabel.classList.add('hidden');
                 this.userInput.value = "";
                 this.passInput.value = "";
             }
-
-            showError(msg) {
-                this.msgLabel.innerText = msg;
-                this.msgLabel.classList.remove('hidden');
-            }
         }
 
-        // Jalankan Aplikasi
-        const app = new AuthApp();
+        // Jalankan
+        new AuthApp();
     </script>
 </body>
 </html>
