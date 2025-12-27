@@ -1,98 +1,107 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Login Subject App</title>
-<style>
-body {
-    background: #222;
-    font-family: Arial;
-}
-.box {
-    width: 340px;
-    margin: 120px auto;
-    background: #fff;
-    padding: 25px;
-    border-radius: 10px;
-}
-input, button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-}
-#panel { display: none; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Login OOP</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 300px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .error { color: red; font-size: 0.8rem; margin-top: 5px; text-align: center; }
+        .hidden { display: none; }
+        .welcome-box { text-align: center; }
+    </style>
 </head>
 <body>
 
-<div class="box" id="loginBox">
-    <h2>Login</h2>
-    <input id="u" placeholder="Username">
-    <input id="p" type="password" placeholder="Password">
-    <button onclick="app.login()">Login</button>
-</div>
+    <div id="login-section" class="card">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button id="login-btn">Masuk</button>
+        <p id="message" class="error hidden"></p>
+    </div>
 
-<div class="box" id="panel">
-    <h2>Halaman User</h2>
-    <p id="userInfo"></p>
-    <button onclick="app.logout()">Logout</button>
-</div>
+    <div id="user-section" class="card hidden">
+        <div class="welcome-box">
+            <h2>Selamat Datang!</h2>
+            <p>Halo, <strong id="display-name"></strong></p>
+            <button id="logout-btn" style="background: #dc3545;">Logout</button>
+        </div>
+    </div>
 
-<script>
-class SubjectUser {
-    constructor(username, password) {
-        this.username = username;
-        this.password = password;
-    }
-}
+    <script>
+        // --- Logic OOP ---
+        class AuthApp {
+            constructor() {
+                this.storageKey = "user_database";
+                this.initDatabase(); // Siapkan data dummy jika kosong
+                
+                // Element Selectors
+                this.loginSection = document.getElementById('login-section');
+                this.userSection = document.getElementById('user-section');
+                this.userInput = document.getElementById('username');
+                this.passInput = document.getElementById('password');
+                this.msgLabel = document.getElementById('message');
+                this.displayName = document.getElementById('display-name');
 
-class AppLogin {
+                // Bind Events
+                document.getElementById('login-btn').addEventListener('click', () => this.handleLogin());
+                document.getElementById('logout-btn').addEventListener('click', () => this.handleLogout());
+            }
 
-    constructor() {
-        this.init();
-    }
+            // Inisialisasi Database JSON di Local Storage
+            initDatabase() {
+                const existingData = localStorage.getItem(this.storageKey);
+                if (!existingData) {
+                    const demoUsers = [
+                        { username: "admin", password: "123" },
+                        { username: "user", password: "password" }
+                    ];
+                    localStorage.setItem(this.storageKey, JSON.stringify(demoUsers));
+                }
+            }
 
-    init() {
-        if (!localStorage.getItem("dataset")) {
-            const data = [
-                new SubjectUser("amelia", "123"),
-                new SubjectUser("nabila", "456")
-            ];
-            localStorage.setItem("dataset", JSON.stringify(data));
+            // Method untuk Verifikasi
+            handleLogin() {
+                const users = JSON.parse(localStorage.getItem(this.storageKey));
+                const inputUser = this.userInput.value;
+                const inputPass = this.passInput.value;
+
+                const foundUser = users.find(u => u.username === inputUser && u.password === inputPass);
+
+                if (foundUser) {
+                    this.showUserPage(foundUser.username);
+                } else {
+                    this.showError("Salah login: Username atau Password keliru!");
+                }
+            }
+
+            showUserPage(username) {
+                this.loginSection.classList.add('hidden');
+                this.userSection.classList.remove('hidden');
+                this.displayName.innerText = username;
+                this.msgLabel.classList.add('hidden');
+            }
+
+            handleLogout() {
+                this.loginSection.classList.remove('hidden');
+                this.userSection.classList.add('hidden');
+                this.userInput.value = "";
+                this.passInput.value = "";
+            }
+
+            showError(msg) {
+                this.msgLabel.innerText = msg;
+                this.msgLabel.classList.remove('hidden');
+            }
         }
-    }
 
-    login() {
-        const user = u.value;
-        const pass = p.value;
-
-        const data = JSON.parse(localStorage.getItem("dataset"));
-        const found = data.find(x => x.username === user && x.password === pass);
-
-        if (!found) {
-            alert("Salah login");
-            return;
-        }
-
-        this.open(found);
-    }
-
-    open(account) {
-        loginBox.style.display = "none";
-        panel.style.display = "block";
-        userInfo.innerHTML = `
-            Username: <b>${account.username}</b>
-        `;
-    }
-
-    logout() {
-        panel.style.display = "none";
-        loginBox.style.display = "block";
-    }
-}
-
-const app = new AppLogin();
-</script>
-
+        // Jalankan Aplikasi
+        const app = new AuthApp();
+    </script>
 </body>
 </html>
