@@ -1,1 +1,106 @@
-tri amelia nurizki
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Login System OOP - Subject Account</title>
+<style>
+body {
+    font-family: Arial;
+    background: linear-gradient(to right, #667eea, #764ba2);
+}
+.card {
+    width: 360px;
+    margin: 120px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.2);
+}
+h2 { text-align: center; }
+input, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+}
+#dashboard { display: none; }
+</style>
+</head>
+
+<body>
+
+<div class="card" id="loginBox">
+    <h2>LOGIN</h2>
+    <input id="user" placeholder="Username">
+    <input id="pass" type="password" placeholder="Password">
+    <button onclick="system.login()">Masuk</button>
+</div>
+
+<div class="card" id="dashboard">
+    <h2>Info Account</h2>
+    <div id="info"></div>
+    <button onclick="system.logout()">Logout</button>
+</div>
+
+<script>
+class Account {
+    constructor(username, password, role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+}
+
+class LoginSystem {
+
+    constructor() {
+        this.loadData();
+    }
+
+    loadData() {
+        if (!localStorage.getItem("accounts")) {
+            const list = [
+                new Account("amelia", "12345", "User"),
+                new Account("operator", "op123", "Admin")
+            ];
+            localStorage.setItem("accounts", JSON.stringify(list));
+        }
+    }
+
+    login() {
+        const u = user.value;
+        const p = pass.value;
+
+        const accounts = JSON.parse(localStorage.getItem("accounts"));
+
+        const acc = accounts.find(a => a.username === u && a.password === p);
+
+        if (!acc) {
+            alert("Salah login");
+            return;
+        }
+
+        this.openDashboard(acc);
+    }
+
+    openDashboard(acc) {
+        loginBox.style.display = "none";
+        dashboard.style.display = "block";
+        info.innerHTML = `
+            <p><b>Username:</b> ${acc.username}</p>
+            <p><b>Role:</b> ${acc.role}</p>
+        `;
+    }
+
+    logout() {
+        dashboard.style.display = "none";
+        loginBox.style.display = "block";
+    }
+}
+
+const system = new LoginSystem();
+</script>
+
+</body>
+</html>
+
+
