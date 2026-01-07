@@ -2,64 +2,76 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>UAS PBO - Login OOP</title>
+<title>UAS PBO Login OOP</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
+*{box-sizing:border-box;font-family:'Poppins',sans-serif}
 body{
-    font-family: Arial;
-    background: linear-gradient(120deg,#2980b9,#6dd5fa);
+    margin:0;
     height:100vh;
+    background:linear-gradient(120deg,#1f4037,#99f2c8);
     display:flex;
     justify-content:center;
     align-items:center;
 }
-.box{
-    background:white;
-    width:350px;
-    padding:30px;
-    border-radius:12px;
-    box-shadow:0 10px 30px rgba(0,0,0,.3);
+.glass{
+    width:360px;
+    padding:35px;
+    border-radius:18px;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(12px);
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+    color:white;
 }
-h2{text-align:center;margin-bottom:20px}
+h2{text-align:center;margin-bottom:25px;font-weight:600}
 input{
     width:100%;
-    padding:10px;
+    padding:12px;
     margin:10px 0;
-    border-radius:8px;
-    border:1px solid #ccc;
+    border:none;
+    border-radius:10px;
+    outline:none;
 }
 button{
     width:100%;
-    padding:10px;
-    background:#2980b9;
+    padding:12px;
     border:none;
-    color:white;
-    border-radius:8px;
+    border-radius:10px;
+    background:#00c9a7;
+    color:#003;
+    font-weight:600;
     cursor:pointer;
+    transition:.3s;
 }
-button:hover{background:#3498db}
-#dashboard{
-    display:none;
-}
+button:hover{background:#00b59c}
+
+#dashboard{display:none}
+
 .info{
-    background:#ecf0f1;
+    background:rgba(255,255,255,.25);
     padding:15px;
-    border-radius:8px;
+    border-radius:12px;
+    margin-bottom:15px;
 }
+.footer{text-align:center;font-size:12px;opacity:.8;margin-top:10px}
 </style>
 </head>
 <body>
 
-<div class="box">
+<div class="glass">
 
 <div id="loginForm">
-<h2>Login System</h2>
-<input type="text" id="username" placeholder="Username">
-<input type="password" id="password" placeholder="Password">
+<h2>Login Sistem PBO</h2>
+<input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password">
 <button onclick="app.login()">Login</button>
+<div class="footer">UAS Pemrograman Berbasis Objek</div>
 </div>
 
 <div id="dashboard">
-<h2>Welcome User</h2>
+<h2>Welcome 👋</h2>
 <div class="info" id="infoUser"></div>
 <button onclick="app.logout()">Logout</button>
 </div>
@@ -91,11 +103,11 @@ class LoginSystem{
     }
 
     login(){
-        const u = document.getElementById("username").value;
-        const p = document.getElementById("password").value;
+        const u = username.value;
+        const p = password.value;
         const users = this.db.getUsers();
 
-        const found = users.find(user => user.username === u && user.password === p);
+        const found = users.find(x => x.username === u && x.password === p);
 
         if(found){
             this.showDashboard(found);
@@ -105,12 +117,12 @@ class LoginSystem{
     }
 
     showDashboard(user){
-        document.getElementById("loginForm").style.display="none";
-        document.getElementById("dashboard").style.display="block";
-        document.getElementById("infoUser").innerHTML = `
-            <b>Username :</b> ${user.username}<br>
-            <b>Status :</b> Login Berhasil<br>
-            <b>Role :</b> User Sistem PBO
+        loginForm.style.display="none";
+        dashboard.style.display="block";
+        infoUser.innerHTML=`
+        <b>Username :</b> ${user.username}<br>
+        <b>Status :</b> Login Berhasil<br>
+        <b>Role :</b> User Sistem PBO
         `;
     }
 
